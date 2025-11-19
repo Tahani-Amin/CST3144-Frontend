@@ -5,7 +5,54 @@
   <title>Courses Grid</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.7.16/dist/vue.js"></script>
 
+  <link href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+   * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: #0b1020;
+    color: #0f172a;
+    font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.45;
+  }
 
+  .page-bg{
+    position: fixed; inset: 0;
+    background: url("Images/bkg.png") center/cover no-repeat;
+    z-index: -2;
+  }
+  page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 32px 20px;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 24px;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    background: rgba(0,0,0,.28);
+    border: 1px solid rgba(15, 23, 42, .18);
+    border-radius: 14px;
+    padding: 18px;
+    box-shadow: 0 8px 20px rgba(2, 6, 23, .12);
+    color: #fff;
+  }
+  .sidebar h2 { margin: 0 0 12px; font-weight: 600; }
+  .label { display: block; font-size: .9rem; margin-bottom: 6px; }
+  .input, .select {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, .18);
+    background: rgba(255,255,255,.10);
+    color: #fff;
+    padding: 10px 12px;
+    outline: none;
+  }
+</style>
 
 
 
@@ -13,7 +60,68 @@
 </head>
 
 <body>
-  
+  <div class="page-bg"></div>
+
+  <main id="app" class="page"> <!-- My main Vue app container -->
+    
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>Search</h2>
+      <div class="group">
+        <label class="label">Find a course</label>
+        <input class="input" type="text" placeholder="Search by subject, location…" />
+      </div>
+
+      <hr />
+
+    <!-- Sort section -->
+      <h2>Sort</h2>
+      <div class="group">
+        <label class="label">Sort by</label>
+        <select class="select" v-model="sortBy">
+          <option value="subject">Subject</option>
+          <option value="location">Location</option>
+          <option value="price">Price</option>
+          <option value="spaces">Spaces</option>
+        </select>
+      </div>
+
+      <!-- Order lessons by section -->
+      <div class="group">
+        <label class="label">Order</label>
+        <select class="select" v-model="sortOrder">
+          <option value="ascending">Ascending</option>
+          <option value="descending">Descending</option>
+        </select>
+      </div>
+
+      <hr />
+
+       <!-- Filter section -->
+
+      <h2>Filter</h2>
+      <div class="group">
+        <span class="label">Location</span>
+        <div class="checks">
+          <label class="check"><input type="checkbox"> London</label>
+          <label class="check"><input type="checkbox"> Oxford</label>
+          <label class="check"><input type="checkbox"> York</label>
+          <label class="check"><input type="checkbox"> Bristol</label>
+        </div>
+      </div>
+
+
+      <!-- Filter by subject section -->
+      <div class="group">
+        <span class="label">Subject</span>
+        <div class="checks">
+          <label class="check"><input type="checkbox"> Math</label>
+          <label class="check"><input type="checkbox"> English</label>
+          <label class="check"><input type="checkbox"> Music</label>
+          <label class="check"><input type="checkbox"> Science</label>
+        </div>
+      </div>
+    </aside>
   
 <script type="text/javascript">
   let Webstore = new Vue({
