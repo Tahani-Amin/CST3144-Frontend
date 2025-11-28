@@ -460,7 +460,7 @@
 
         // returns both name and phone are valid
         canCheckout() {
-          return this.nameValid && this.phoneValid && this.emailValid;
+          return this.nameValid && this.phoneValid && this.emailValid && this.cart.length > 0;  
         }
       },
 
@@ -496,9 +496,19 @@
 
         submitOrder() {
           if (!this.canCheckout) return;
-          this.orderSubmitted = true; 
-          alert("Order submitted!");  
+          this.orderSubmitted = true;
+          alert("Order submitted!");
+          this.cart = [];
+
+          this.customerName = '';
+          this.customerPhone = '';
+          this.customerEmail = '';
+
+          this.orderSubmitted = false;
+
+          this.showCart = false;
         }
+
       }
     });
   </script>
