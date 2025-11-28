@@ -8,9 +8,10 @@
   <link href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-  <script src="lessons.js"></script>
+    <script src="lessons.js"></script>
+    
 <style>
-   * { box-sizing: border-box; }
+  * { box-sizing: border-box; }
   html, body { height: 100%; margin: 0; }
   body {
     background: #0b1020;
@@ -24,7 +25,8 @@
     background: url("Images/bkg.png") center/cover no-repeat;
     z-index: -2;
   }
-  page {
+
+  .page {
     max-width: 1400px;
     margin: 0 auto;
     padding: 32px 20px;
@@ -53,9 +55,6 @@
     padding: 10px 12px;
     outline: none;
   }
-
-
-  
   .input::placeholder { color: rgba(255,255,255,.75); }
   .sidebar hr { border: 0; border-top: 1px solid rgba(15, 23, 42, .18); margin: 14px 0; }
 
@@ -104,19 +103,6 @@
 
   .course-details { margin: 0; font-size: 0.85rem; color: #334155; }
 
-  .sidebar h2::before, .content-title::before{
-    content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: #8b5cf6; margin-right: 8px; transform: translateY(-1px);
-  }
-
-  @media (max-width: 560px){
-    .courses-grid{
-      grid-template-columns: repeat(auto-fill, 190px);
-      grid-auto-rows: 170px;
-      justify-content: center;
-    }
-    .course-card{ height: 180px; }
-  }
   .btn-cart {
     background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
     color: #ffffff;
@@ -155,10 +141,85 @@
   }
   .btn-remove:hover { transform: translateY(-1px); }
 
+  /* checkout part */
+  .checkout {
+    margin-top: 18px;
+    background: rgba(255,255,255,.60);
+    border: 1px solid rgba(15, 23, 42, .18);
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(2, 6, 23, .12);
+    padding: 16px;
+    display: grid;
+    gap: 12px;
+  }
+  .checkout .row { display: grid; gap: 6px; }
+  .checkout label { font-weight: 600; font-size: .9rem; }
+  .checkout .field {
+    width: 100%; padding: 10px 12px; border-radius: 10px;
+    border: 1px solid rgba(15, 23, 42, .18); outline: none;
+  }
+  .validation { font-size: .85rem; color: #334155; }
+  .validation-error { color: #dc2626; font-size: .85rem; }
+  .validation-success { color: #16a34a; font-size: .85rem; }
+
+  .btn-checkout {
+    justify-self: start;
+    background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
+    color: #ffffff;
+    border: none; border-radius: 9999px;
+    padding: 10px 16px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 8px 22px rgba(109,40,217,.28);
+  }
+  .btn-checkout:disabled { opacity: .55; cursor: not-allowed; }
+  .confirm {
+    padding: 10px 12px;
+    background: rgba(22,163,74,.12);
+    border: 1px solid rgba(22,163,74,.35);
+    color: #16a34a;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+
+  /* cart button */
+  .cart-button{
+    position: fixed; right: 28px; bottom: 28px; z-index: 10;
+  }
+  .cart-button button{
+    background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 9999px;
+    padding: 14px 22px;
+    font-weight: 800; font-size: 1rem;
+    display: inline-flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 28px rgba(109,40,217,.45);
+    cursor: pointer;
+  }
+  .cart-button button:hover{ transform: translateY(-1px); filter: brightness(1.07); }
+  .cart-button .cart-count{
+    margin-left: 8px;
+    background: rgba(255,255,255,.2);
+    border: 1px solid rgba(255,255,255,.4);
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: .85rem;
+  }
+  .cart-button button:disabled{ opacity: .55; cursor: not-allowed; }
+
+  .sidebar h2::before, .content-title::before{
+    content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #8b5cf6; margin-right: 8px; transform: translateY(-1px);
+  }
+
+  @media (max-width: 560px){
+    .courses-grid{
+      grid-template-columns: repeat(auto-fill, 190px);
+      grid-auto-rows: 170px;
+      justify-content: center;
+    }
+    .course-card{ height: 180px; }
+  }
 </style>
-
-
-
 
 </head>
 
@@ -225,6 +286,7 @@
         </div>
       </div>
     </aside>
+
     <!-- Courses  -->
     <section class="content">
       <div class="content-header">
@@ -255,7 +317,79 @@
             Add to Cart </button>
         </article>
       </div>
+
+      <!-- Cart page -->
+      <div v-else>
+        <div v-if="cartItemCount" class="cart-list">
+          <div class="cart-item" v-for="(item, cartItems) in cartLessonObjects" :key="cartItems">
+            <div>
+              <h4>
+                <i :class="['fa-fw', item.icon]" style="margin-right:8px;"></i>
+                {{ item.subject }} — {{ item.location }}
+              </h4>
+              <p>Price: £{{ item.price }}</p>
+            </div>
+            <button class="btn-remove" @click="removeFromCart(item)">
+              <i class="fa-solid fa-minus-circle"></i>
+              Remove
+            </button>
+          </div>
+        </div>
+        <p v-else>Your cart is empty.</p>
+
+        <div class="checkout">
+          <h3 style="margin:0;">Checkout</h3>
+
+          <div class="row">
+            <label for="customerName">Name</label>
+            <input id="customerName" class="field" type="text" v-model.trim="customerName" placeholder="Please enter your full name" />
+            <div class="validation" v-if="!customerName">Enter your full name using letters and spaces.</div>
+            <div class="validation-error" v-else-if="!nameValid">Name must contain letters and spaces only.</div>
+            <div class="validation-success" v-else>Looks good.</div>
+          </div>
+
+          <div class="row">
+            <label for="customerPhone">Phone</label>
+            <input id="customerPhone" class="field" type="text" v-model.trim="customerPhone" placeholder="Phone (numbers only)" />
+            <div class="validation" v-if="!customerPhone">Enter digits only, e.g., 07123456789.</div>
+            <div class="validation-error" v-else-if="!phoneValid">Phone must contain numbers only.</div>
+            <div class="validation-success" v-else>Looks good.</div>
+          </div>
+
+          <div class="row">
+            <label for="customerEmail">Email</label>
+            <input id="customerEmail" class="field" type="text" v-model.trim="customerEmail" placeholder="Email (must contain @)" />
+            <div class="validation" v-if="!customerEmail"> Enter your email (must include @). </div>
+            <div class="validation-error" v-else-if="!emailValid">Email must contain the @ symbol. </div>
+            <div class="validation-success" v-else>Looks good.</div>
+          </div>
+
+          <button class="btn-checkout" :disabled="!canCheckout" @click="submitOrder">
+            <i class="fa-solid fa-check"></i> Checkout
+          </button>
+
+          <div class="confirm" v-if="orderSubmitted">
+            Order submitted! We’ll contact you soon.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cart Button -->
+    <div class="cart-button">
+      <button :disabled="cartItemCount === '' && !showCart" @click="toggleCart" >
+        <i class="fa-solid" :class="showCart ? 'fa-arrow-left' : 'fa-cart-shopping'"></i>
+        <span>{{ showCart ? 'Back' : 'Cart' }}</span>
+        <span class="cart-count" v-if="cartItemCount">{{ cartItemCount }}</span>
+      </button>
+    </div>
+  </main>
   
+
+</body>
+</html>
+
+
 <script type="text/javascript">
     let Webstore = new Vue({
       el: '#app',
@@ -264,11 +398,18 @@
         cart: [],                
         showCart: false,         
         sortBy: 'subject',
-        sortOrder: 'ascending',    
-    },
+        sortOrder: 'ascending',
 
-    computed: {
-      cartItemCount() {
+        // Checkout fields
+        customerName: '',
+        customerPhone: '',
+        customerEmail: '',
+        orderSubmitted: false
+      },
+
+      computed: {
+
+        cartItemCount() {
           return this.cart.length || "";
         },
 
@@ -302,9 +443,28 @@
           return this.cart.map(id => this.lessons.find(l => l.id === id));
         },
 
-    },
+        // Checks if the name is valid
+        nameValid() {
+          const re = /^[A-Za-z\s]+$/;
+          return this.customerName.length > 0 && re.test(this.customerName);
+        },
+        // Checks if the phone is valid
+        phoneValid() {
+          const re = /^[0-9]+$/;
+          return this.customerPhone.length > 0 && re.test(this.customerPhone);
+        },
+        emailValid() {
+          return this.customerEmail.includes("@") && this.customerEmail.length > 3;
+        },
 
-    methods: {
+
+        // returns both name and phone are valid
+        canCheckout() {
+          return this.nameValid && this.phoneValid && this.emailValid;
+        }
+      },
+
+      methods: {
 
         // Check if lesson can be added to cart
         canAddToCart(lesson) {
@@ -333,9 +493,15 @@
           if (!this.cart.length && !this.showCart) return;  
           this.showCart = !this.showCart;
         },
-      
-    }
-  });
-</script>
+
+        submitOrder() {
+          if (!this.canCheckout) return;
+          this.orderSubmitted = true; 
+          alert("Order submitted!");  
+        }
+      }
+    });
+  </script>
 </body>
 </html>
+
