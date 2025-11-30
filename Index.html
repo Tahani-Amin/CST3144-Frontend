@@ -233,7 +233,7 @@
       <h2>Search</h2>
       <div class="group">
         <label class="label">Find a course</label>
-        <input class="input" type="text" placeholder="Search by subject, location…" />
+        <input class="input" type="text" placeholder="Search by subject, location…" v-model="searchTerm" />
       </div>
 
       <hr />
@@ -394,11 +394,12 @@
     let Webstore = new Vue({
       el: '#app',
       data: {
-        lessons: lessons,       
+        lessons: [],       
         cart: [],                
         showCart: false,         
         sortBy: 'subject',
         sortOrder: 'ascending',
+        searchTerm: '',
 
         // Checkout fields
         customerName: '',
@@ -406,6 +407,16 @@
         customerEmail: '',
         orderSubmitted: false
       },
+      watch: {
+        searchTerm(newValue) {
+          this.fetchLessons(newValue);
+        }
+      },
+
+      created() {
+        this.fetchLessons("");
+      },
+
 
       computed: {
 
@@ -507,7 +518,26 @@
           this.orderSubmitted = false;
 
           this.showCart = false;
+        },
+        fetchLessons(query) {
+          const api = "http://localhost:3000";
+
+          let url = api + "/lessons";
+
+          if (query && query.trim() !== "") {
+            url = api + "/search?q=" + encodeURIComponent(query.trim());
+          }
+
+          fetch(url)
+            .then(response => response.json())
+            .then(data => {
+              this.lessons = data;
+            })
+            .catch(err => {
+              console.error("Error fetching lessons:", err);
+            });
         }
+
 
       }
     });
