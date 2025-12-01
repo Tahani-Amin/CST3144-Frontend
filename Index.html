@@ -477,7 +477,7 @@
 
       methods: {
 
-        // Check if lesson can be added to cart
+        // Checking if lesson can be added to cart
         canAddToCart(lesson) {
           return lesson.spaces > this.cartCount(lesson.id);
         },
@@ -499,7 +499,7 @@
           }
           return count;
         },
-        // Toggles between lesseons page and cart page
+        // Toggles between my lessons page and cart page
         toggleCart() {
           if (!this.cart.length && !this.showCart) return;  
           this.showCart = !this.showCart;
@@ -507,25 +507,86 @@
 
         submitOrder() {
           if (!this.canCheckout) return;
-          this.orderSubmitted = true;
-          alert("Order submitted!");
-          this.cart = [];
 
-          this.customerName = '';
-          this.customerPhone = '';
-          this.customerEmail = '';
+          const uniqueLessonIds = [...new Set(this.cart)];
 
-          this.orderSubmitted = false;
+          const lessonsDetail = uniqueLessonIds.map(id => {
+            const lessonObj = this.lessons.find(l => l.id === id);
+            if (!lessonObj) return null;
 
-          this.showCart = false;
+            return {
+              id: id,
+              subject: lessonObj.subject,
+              spacesBooked: this.cartCount(id)
+            };
+          }).filter(item => item !== null);
+
+          const orderData = {
+            name: this.customerName,
+            phone: this.customerPhone,
+            email: this.customerEmail,
+
+            lessonIds: uniqueLessonIds,
+            lessons: lessonsDetail,
+
+            totalSpaces: this.cart.length,
+            orderDate: new Date().toISOString()
+          };
+
+          // Posting the order
+          fetch("http://localhost:3000/orders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData)
+          })
+            .then(res => res.json())
+            .then(savedOrder => {
+              console.log("Order saved:", savedOrder);
+
+              lessonsDetail.forEach(item => {
+                const lesson = this.lessons.find(l => l.id === item.id);
+                if (!lesson) return;
+
+                const newSpaces = lesson.spaces - item.spacesBooked;
+
+                fetch("http://localhost:3000/lessons/" + item.id, {
+                  method: "PUT",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ spaces: newSpaces })
+                })
+                  .then(r => r.json())
+                  .then(result => {
+                    console.log("Updated lesson", item.id, "spaces ->", newSpaces, result);
+                  })
+                  .catch(err => {
+                    console.error("Error updating lesson spaces for", item.id, err);
+                  });
+              });
+
+              this.orderSubmitted = true;
+              alert("Order submitted!");
+
+              this.cart = [];
+              this.customerName = "";
+              this.customerPhone = "";
+              this.customerEmail = "";
+
+              this.showCart = false;
+
+              this.fetchLessons(this.searchTerm);
+            })
+            .catch(err => {
+              console.error("Order error:", err);
+              alert("There was an error submitting the order.");
+            });
         },
-        fetchLessons(query) {
-          const api = "http://localhost:3000";
 
-          let url = api + "/lessons";
+
+        fetchLessons(query) {
+          let url = "http://localhost:3000/lessons";
 
           if (query && query.trim() !== "") {
-            url = api + "/search?q=" + encodeURIComponent(query.trim());
+            url = "http://localhost:3000/search?q=" + encodeURIComponent(query.trim());
           }
 
           fetch(url)
@@ -537,6 +598,7 @@
               console.error("Error fetching lessons:", err);
             });
         }
+
 
 
       }
