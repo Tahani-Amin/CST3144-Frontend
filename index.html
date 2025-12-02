@@ -22,7 +22,7 @@
 
   .page-bg{
     position: fixed; inset: 0;
-    background: url("http://localhost:3000/bkg.png") center/cover no-repeat;
+    background: url("https://cst3144-backend-8tqe.onrender.com/bkg.png") center/cover no-repeat;
     z-index: -2;
   }
 
@@ -534,7 +534,7 @@
           };
 
           // Posting the order
-          fetch("http://localhost:3000/orders", {
+          fetch("https://cst3144-backend-8tqe.onrender.com/orders", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(orderData)
@@ -549,7 +549,7 @@
 
                 const newSpaces = lesson.spaces - item.spacesBooked;
 
-                fetch("http://localhost:3000/lessons/" + item.id, {
+                fetch("https://cst3144-backend-8tqe.onrender.com/lessons/" + item.id, {
                   method: "PUT",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({ spaces: newSpaces })
@@ -583,10 +583,10 @@
 
 
         fetchLessons(query) {
-          let url = "http://localhost:3000/lessons";
+          let url = "https://cst3144-backend-8tqe.onrender.com/lessons";
 
           if (query && query.trim() !== "") {
-            url = "http://localhost:3000/search?q=" + encodeURIComponent(query.trim());
+            url = "https://cst3144-backend-8tqe.onrender.com/search?q=" + encodeURIComponent(query.trim());
           }
 
           fetch(url)
