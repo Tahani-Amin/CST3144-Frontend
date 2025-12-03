@@ -252,6 +252,8 @@
     watch: { // Runs everytime the data value is changed
       searchTerm(newValue) {
         this.fetchLessons(newValue);
+        console.log("The user searched for:", `"${newValue}"`);
+
       }
     },
 
@@ -320,14 +322,20 @@
       },
       // Adds lesson to cart
       addToCart(lesson) {
-        if (!this.canAddToCart(lesson)) return; 
+        if (!this.canAddToCart(lesson)) {
+          console.log("Spaces full:", lesson.subject);
+          return;
+        }
+        console.log("Added to cart", lesson.subject, lesson.location);
         this.cart.push(lesson.id);
       },
       // Removes lessson from th cart
       removeFromCart(lesson) {
+        console.log("Removed from cart:", lesson.subject);
         const cartItems = this.cart.indexOf(lesson.id);
         if (cartItems !== -1) this.cart.splice(cartItems, 1);
       },
+
       // Counts how many of a lesson are in the cart
       cartCount(id) {
         let count = 0;
@@ -345,6 +353,7 @@
       // Submits the order to the backend
       submitOrder() {
         if (!this.canCheckout) return;
+        console.log("Checkout submitted!");
 
         // Build an array of unique lesson IDs from the cart manually
         const uniqueLessonIds = [];
@@ -429,37 +438,24 @@
           });
       },
 
-fetchLessons(query) {
-  let url = "https://cst3144-backend-8tqe.onrender.com/lessons";
+      fetchLessons(query) {
+        console.log("fetchLessons() query =", `"${query}"`);
 
-  if (query && query.trim() !== "") {
-    url = "https://cst3144-backend-8tqe.onrender.com/search?q=" 
-          + encodeURIComponent(query.trim());
-  }
+        let url = "https://cst3144-backend-8tqe.onrender.com/lessons";
 
-  if (query && query.trim() !== "") {
-    fetch("https://cst3144-backend-8tqe.onrender.com/search-log", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        query: query.trim(),
-        timestamp: new Date().toISOString()
-      })
-    }).catch(err => {
-      console.error("Error logging search:", err);
-    });
-  }
+        if (query && query.trim() !== "") {
+          url = "https://cst3144-backend-8tqe.onrender.com/search?q=" + encodeURIComponent(query.trim());
+        }
 
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      this.lessons = data;
-    })
-    .catch(err => {
-      console.error("Error fetching lessons:", err);
-    });
-}
-
+        fetch(url)
+          .then(response => response.json())
+          .then(data => {
+            this.lessons = data;
+          })
+          .catch(err => {
+            console.error("Error fetching lessons:", err);
+          });
+      }
 
     }
   });
