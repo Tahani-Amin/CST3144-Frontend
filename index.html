@@ -55,30 +55,6 @@
 
       <hr />
 
-      <!-- Filter section -->
-      <h2>Filter</h2>
-      <div class="group">
-        <span class="label">Location</span>
-        <div class="checks">
-          <label class="check"><input type="checkbox"> London</label>
-          <label class="check"><input type="checkbox"> Oxford</label>
-          <label class="check"><input type="checkbox"> York</label>
-          <label class="check"><input type="checkbox"> Bristol</label>
-        </div>
-      </div>
-
-      <!-- Filter by subject section -->
-      <div class="group">
-        <span class="label">Subject</span>
-        <div class="checks">
-          <label class="check"><input type="checkbox"> Math</label>
-          <label class="check"><input type="checkbox"> English</label>
-          <label class="check"><input type="checkbox"> Music</label>
-          <label class="check"><input type="checkbox"> Science</label>
-        </div>
-      </div>
-    </aside>
-
     <!-- Courses  -->
     <section class="content">
       <div class="content-header">
@@ -348,6 +324,10 @@
       toggleCart() {
         if (!this.cart.length && !this.showCart) return;  
         this.showCart = !this.showCart;
+        if (this.showCart) {
+          this.orderSubmitted = false;
+        }
+
       },
 
       // Submits the order to the backend
