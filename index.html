@@ -431,7 +431,7 @@
 
             this.showCart = false;
 
-            this.Lessons(this.searchTerm);
+            this.fetchLessons(this.searchTerm);
           })
           .catch(err => {
             console.error("Order error:", err);
