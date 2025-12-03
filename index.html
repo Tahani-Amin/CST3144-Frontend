@@ -406,6 +406,7 @@
 
               const newSpaces = lesson.spaces - item.spacesBooked;
 
+              // Update the lesson spaces in the backend
               fetch("https://cst3144-backend-8tqe.onrender.com/lessons/" + item.id, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
@@ -438,6 +439,7 @@
           });
       },
 
+      // Fetches lessons from the backend from search term
       fetchLessons(query) {
         console.log("fetchLessons() query =", `"${query}"`);
 
