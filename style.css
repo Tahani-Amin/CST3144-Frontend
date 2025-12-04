@@ -313,9 +313,10 @@ body {
 .cart-button {
   position: fixed;
   right: 28px;
-  bottom: 28px;
+  top: 22px;
   z-index: 10;
 }
+
 
 .cart-button button {
   background: linear-gradient(180deg, #8b5cf6 0%, #6d28d9 100%);
